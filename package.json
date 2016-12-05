@@ -1,0 +1,57 @@
+{
+  "name": "bootstrap-richarea-images",
+  "version": "1.0.0",
+  "description": "A Bootstrap Richarea extension for image management.",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "parallelshell 'npm run build:sass' 'npm run build:js' 'npm run assets' 'npm run samples'",
+    "prebuild": "npm run clean",
+    "postbuild": "npm run optimize",
+    "build:sass": "node-sass src/sass/richarea-images.scss > dist/richarea-images.css",
+    "build:js": "webpack",
+    "watch": "npm run build && parallelshell 'npm run watch:sass' 'npm run watch:js' 'npm run watch:assets --wait=1' 'npm run watch:samples'",
+    "watch:sass": "watch 'npm run build:sass && npm run optimize:css' src/sass",
+    "watch:js": "watch 'npm run build:js && npm run optimize:js' src/js",
+    "watch:assets": "watch 'npm run assets' src/assets",
+    "watch:samples": "parallelshell 'npm run watch:samples:richarea' 'npm run watch:samples:bsmf'",
+    "watch:samples:richarea": "watch 'npm run samples:richarea' node_modules/bootstrap-richarea/dist",
+    "watch:samples:bsmf": "watch 'npm run samples:bsmf' node_modules/bootstrap-modal-fullscreen/dist",
+    "clean": "rm -rf dist/*",
+    "optimize": "parallelshell 'npm run optimize:css' 'npm run optimize:js'",
+    "optimize:css": "cleancss dist/richarea-images.css > dist/richarea-images.min.css",
+    "optimize:js": "uglifyjs dist/richarea-images.js > dist/richarea-images.min.js",
+    "assets": "cp -r src/assets/* dist",
+    "samples": "parallelshell 'npm run samples:richarea' 'npm run samples:bsmf'",
+    "samples:richarea": "rm -rf ./samples/richarea && cp -R node_modules/bootstrap-richarea/dist ./samples/richarea",
+    "samples:bsmf": "rm -rf ./samples/bootstrap-modal-fullscreen && cp -R node_modules/bootstrap-modal-fullscreen/dist ./samples/bootstrap-modal-fullscreen"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/benallfree/bootstrap-richarea-images.git"
+  },
+  "keywords": [
+    "bootstrap",
+    "text",
+    "editor",
+    "wysiwyg",
+    "images"
+  ],
+  "author": "Ben Allfree",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/benallfree/bootstrap-richarea-images/issues"
+  },
+  "homepage": "https://github.com/benallfree/bootstrap-richarea-images#readme",
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-core": "^6.18.2",
+    "babel-loader": "^6.2.8",
+    "babel-preset-es2015": "^6.18.0",
+    "clean-css": "^3.4.21",
+    "node-sass": "^3.13.0",
+    "parallelshell": "^2.0.0",
+    "uglifyjs": "^2.4.10",
+    "watch": "^1.0.1",
+    "webpack": "^1.13.3"
+  }
+}
