@@ -138,25 +138,26 @@
 	                  _this2.isCropperInitialized = true;
 	                  $modal.find('.image-editor').visible();
 	                } else {
-	                  shouldSave = true;
-	                  var $fileInput = $e.find('[type=file]');
-	                  var file = $fileInput.get(0).files[0];
-	                  fr = new FileReader();
-	                  fr.onload = function () {
-	                    debugger;
-	                    if (!_this2.config.editors.ImageEditor.uploadUrl) return;
-	                    $.post(_this2.config.editors.ImageEditor.uploadUrl, {
-	                      data: fr.result
-	                    }, function (data, status) {
-	                      console.log([data, status]);
-	                      if (status == 'success' && data.status == 'success') {
-	                        _this2.field.originalImage = data.url;
-	                        _this2.field.croppedImage = data.url;
-	                      }
-	                    });
-	                  };
-	                  fr.readAsDataURL(file);
-	                  _this2.field.croppedImage = $e.cropit('export');
+	                  (function () {
+	                    shouldSave = true;
+	                    var $fileInput = $e.find('[type=file]');
+	                    var file = $fileInput.get(0).files[0];
+	                    var fr = new FileReader();
+	                    fr.onload = function () {
+	                      if (!_this2.config.editors.ImageEditor.uploadUrl) return;
+	                      $.post(_this2.config.editors.ImageEditor.uploadUrl, {
+	                        data: fr.result
+	                      }, function (data, status) {
+	                        console.log([data, status]);
+	                        if (status == 'success' && data.status == 'success') {
+	                          _this2.field.originalImage = data.url;
+	                          _this2.field.croppedImage = data.url;
+	                        }
+	                      });
+	                    };
+	                    fr.readAsDataURL(file);
+	                    _this2.field.croppedImage = $e.cropit('export');
+	                  })();
 	                }
 	              },
 	              onZoomChange: function onZoomChange() {

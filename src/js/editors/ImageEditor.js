@@ -66,9 +66,8 @@ class ImageEditor extends RichAreaBaseEditor
                 shouldSave = true;
                 let $fileInput = $e.find('[type=file]');
                 let file = $fileInput.get(0).files[0];
-                fr = new FileReader();
+                let fr = new FileReader();
                 fr.onload = ()=>{
-                  debugger;
                   if(!this.config.editors.ImageEditor.uploadUrl) return;
                   $.post(this.config.editors.ImageEditor.uploadUrl, {
                     data: fr.result,
