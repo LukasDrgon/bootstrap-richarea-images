@@ -50,7 +50,7 @@
 	    src = scripts[scripts.length - 1].src;
 	var parser = document.createElement('a');
 	parser.href = src;
-	var assetRoot = parser.pathname.replace(/\/richarea-images.js/, "");
+	var assetRoot = parser.href.replace(/\/[^\/]+$/, "");
 
 	RichArea.registerEditor(__webpack_require__(1), {
 	  assetRoot: assetRoot
