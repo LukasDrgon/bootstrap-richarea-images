@@ -23,7 +23,8 @@
     "assets": "cp -r src/assets/* dist",
     "samples": "parallelshell 'npm run samples:richarea' 'npm run samples:bsmf'",
     "samples:richarea": "rm -rf ./samples/richarea && cp -R node_modules/bootstrap-richarea/dist ./samples/richarea",
-    "samples:bsmf": "rm -rf ./samples/bootstrap-modal-fullscreen && cp -R node_modules/bootstrap-modal-fullscreen/dist ./samples/bootstrap-modal-fullscreen"
+    "samples:bsmf": "rm -rf ./samples/bootstrap-modal-fullscreen && cp -R node_modules/bootstrap-modal-fullscreen/dist ./samples/bootstrap-modal-fullscreen",
+    "thumbnails": "babel-node ./node_modules/.bin/richarea-thumbnails ./src/assets/templates/layouts.html http://richareaimages.dev/samples/example2.html"
   },
   "repository": {
     "type": "git",
