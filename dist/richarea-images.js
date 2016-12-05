@@ -143,8 +143,9 @@
 	                  var file = $fileInput.get(0).files[0];
 	                  fr = new FileReader();
 	                  fr.onload = function () {
-	                    if (!_this2.config.imageUploadUrl) return;
-	                    $.post(_this2.config.imageUploadUrl, {
+	                    debugger;
+	                    if (!_this2.config.editors.ImageEditor.uploadUrl) return;
+	                    $.post(_this2.config.editors.ImageEditor.uploadUrl, {
 	                      data: fr.result
 	                    }, function (data, status) {
 	                      console.log([data, status]);
@@ -176,8 +177,8 @@
 
 	            $modal.on('hide.bs.modal', function () {
 	              if (!shouldSave) return;
-	              if (!_this2.config.imageUploadUrl) return;
-	              $.post(_this2.config.imageUploadUrl, {
+	              if (!_this2.config.editors.ImageEditor.uploadUrl) return;
+	              $.post(_this2.config.editors.ImageEditor.uploadUrl, {
 	                data: $e.cropit('export')
 	              }, function (data, status) {
 	                console.log([data, status]);

@@ -70,7 +70,7 @@ class ImageEditor extends RichAreaBaseEditor
                 fr.onload = ()=>{
                   debugger;
                   if(!this.config.editors.ImageEditor.uploadUrl) return;
-                  $.post(this.config.ImageEditor.uploadUrl, {
+                  $.post(this.config.editors.ImageEditor.uploadUrl, {
                     data: fr.result,
                   }, (data,status)=>{
                     console.log([data, status]);
@@ -104,7 +104,7 @@ class ImageEditor extends RichAreaBaseEditor
           $modal.on('hide.bs.modal', ()=>{
             if(!shouldSave) return;
             if(!this.config.editors.ImageEditor.uploadUrl) return;
-            $.post(this.config.editors.uploadUrl, {
+            $.post(this.config.editors.ImageEditor.uploadUrl, {
               data: $e.cropit('export'),
             }, (data,status)=>{
               console.log([data, status]);
