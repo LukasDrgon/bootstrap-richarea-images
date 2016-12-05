@@ -68,8 +68,9 @@ class ImageEditor extends RichAreaBaseEditor
                 let file = $fileInput.get(0).files[0];
                 fr = new FileReader();
                 fr.onload = ()=>{
-                  if(!this.config.imageUploadUrl) return;
-                  $.post(this.config.imageUploadUrl, {
+                  debugger;
+                  if(!this.config.editors.ImageEditor.uploadUrl) return;
+                  $.post(this.config.ImageEditor.uploadUrl, {
                     data: fr.result,
                   }, (data,status)=>{
                     console.log([data, status]);
@@ -102,8 +103,8 @@ class ImageEditor extends RichAreaBaseEditor
 
           $modal.on('hide.bs.modal', ()=>{
             if(!shouldSave) return;
-            if(!this.config.imageUploadUrl) return;
-            $.post(this.config.imageUploadUrl, {
+            if(!this.config.editors.ImageEditor.uploadUrl) return;
+            $.post(this.config.editors.uploadUrl, {
               data: $e.cropit('export'),
             }, (data,status)=>{
               console.log([data, status]);
