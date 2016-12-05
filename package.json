@@ -1,8 +1,8 @@
 {
   "name": "bootstrap-richarea-images",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Bootstrap Richarea extension for image management.",
-  "main": "src/index.js",
+  "main": "src/js/index.js",
   "scripts": {
     "package:sass": "npm run build:sass && npm run optimize:css",
     "package:js": "npm run build:js && npm run optimize:js",
