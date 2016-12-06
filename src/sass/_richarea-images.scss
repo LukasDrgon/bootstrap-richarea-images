@@ -7,6 +7,10 @@
       {
         .image-editor
         {
+          .cropit-preview:hover
+          {
+            cursor: move;
+          }
           img
           {
             max-width: initial;

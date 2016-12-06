@@ -23,29 +23,29 @@ class ImageEditor extends RichAreaBaseEditor
       `,
       data: {
         isCropperInitialized: false,
+        $modal: null,
+        $editor: null,
+        $root: null,
+        $referenceImage: null,
+        $fileInput: null,
+        shouldSave: false,
       },
       computed: {
         field: function() {
           return this.item.data[this.fieldName];
         }
       },
-      mounted: function() {
-        let $el = $(this.$el);
-        let $modal = $el.closest('.modal');
-        $modal.on('show.bs.modal', ()=>{
+      methods: {
+        showBsModal: function() {
           if(this.isCropperInitialized) return;
-          $modal.find('.image-editor').invisible();
-        });
-        $modal.on('shown.bs.modal', ()=>{
+          this.$editor.invisible();
+        },
+        shownBsModal: function() {
           if(this.isCropperInitialized) return;
-  
-          let $e = $el.find('.image-editor');
-          let $r = $e.find('.reference');
-          let w = Math.floor($r.actual('width'));
-          let h = Math.floor($r.actual('height'));
-          let shouldSave = false;
-          $e.cropit({
-            exportZoom: $r.get(0).naturalWidth / w,
+          let w = Math.floor(this.$referenceImage.actual('width'));
+          let h = Math.floor(this.$referenceImage.actual('height'));
+          this.$editor.cropit({
+            exportZoom: this.$referenceImage.get(0).naturalWidth / w,
             imageBackground: false,
             imageBackgroundBorderWidth: 0,
             initialZoom: 'image',
@@ -55,66 +55,86 @@ class ImageEditor extends RichAreaBaseEditor
             onFileReadError: function() { console.log('onFileReadError', arguments); },
             onImageError:  function() { console.log('onImageError', arguments); },
             smallImage: 'allow', // Allow images that must be zoomed to fit
-            onImageLoaded: ()=>{
-              if(!this.isCropperInitialized)
-              {
-                $e.cropit('zoom', this.field.zoom);
-                $e.cropit('offset', this.field.offset);
-                this.isCropperInitialized = true;
-                $modal.find('.image-editor').visible();
-              } else {
-                shouldSave = true;
-                let $fileInput = $e.find('[type=file]');
-                let file = $fileInput.get(0).files[0];
-                let fr = new FileReader();
-                fr.onload = ()=>{
-                  if(!this.config.editors.ImageEditor.uploadUrl) return;
-                  $.post(this.config.editors.ImageEditor.uploadUrl, {
-                    data: fr.result,
-                  }, (data,status)=>{
-                    console.log([data, status]);
-                    if(status=='success' && data.status=='success')
-                    {
-                      this.field.originalImage = data.url;
-                      this.field.croppedImage = data.url;
-                    }
-                  });
-                }
-                fr.readAsDataURL(file);
-                this.field.croppedImage = $e.cropit('export');
-              }
-            },
-            onZoomChange: ()=>{
-              if(!this.isCropperInitialized) return;
-              shouldSave = true;
-              this.field.zoom = $e.cropit('zoom');
-              this.field.croppedImage = $e.cropit('export');
-            },
-            onOffsetChange: ()=>{
-              if(!this.isCropperInitialized) return;
-              shouldSave = true;
-              let o = $e.cropit('offset');
-              this.field.offset = {x: Math.floor(o.x), y: Math.floor(o.y)};
-              this.field.croppedImage = $e.cropit('export');
-            },
+            onImageLoaded: this.onImageLoaded,
+            onZoomChange: this.onZoomChange,
+            onOffsetChange: this.onOffsetChange,
           });
-          $e.cropit('imageSrc', this.field.originalImage);
+          this.$editor.cropit('imageSrc', this.field.originalImage);
 
-          $modal.on('hide.bs.modal', ()=>{
-            if(!shouldSave) return;
-            if(!this.config.editors.ImageEditor.uploadUrl) return;
-            $.post(this.config.editors.ImageEditor.uploadUrl, {
-              data: $e.cropit('export'),
-            }, (data,status)=>{
-              console.log([data, status]);
-              if(status=='success' && data.status=='success')
-              {
-                this.field.croppedImage = data.url;
-              }
-            });
-          });          
-        });
-      }
+        },
+        hideBsModal: function() {
+          if(!this.config.editors.ImageEditor.uploadUrl) return;
+          if(!this.shouldSave) return;
+          $.post(this.config.editors.ImageEditor.uploadUrl, {
+            data: this.$editor.cropit('export'),
+          }, (data,status)=>{
+            console.log([data, status]);
+            if(status=='success' && data.status=='success')
+            {
+              this.field.croppedImage = data.url;
+            }
+          });
+        },
+        onImageLoaded: function() {
+          if(!this.isCropperInitialized)
+          {
+            let zoom = this.field.zoom == null ? this.$referenceImage.actual('width') / this.$referenceImage.get(0).naturalWidth : this.field.zoom;
+            this.$editor.cropit('zoom', zoom);
+            this.$editor.cropit('offset', this.field.offset);
+            this.isCropperInitialized = true;
+            this.$editor.visible();
+          } else {
+            this.shouldSave = true;
+            let file = this.$fileInput.get(0).files[0];
+            let fr = new FileReader();
+            fr.onload = ()=>{
+              if(!this.config.editors.ImageEditor.uploadUrl) return;
+              $.post(this.config.editors.ImageEditor.uploadUrl, {
+                data: fr.result,
+              }, (data,status)=>{
+                console.log([data, status]);
+                if(status=='success' && data.status=='success')
+                {
+                  this.field.originalImage = data.url;
+                  this.field.croppedImage = data.url;
+                }
+              });
+            }
+            fr.readAsDataURL(file);
+            this.field.croppedImage = this.$editor.cropit('export');
+          }
+        },
+        onZoomChange: function() {
+          if(!this.isCropperInitialized) return;
+          this.shouldSave = true;
+          this.field.zoom = this.$editor.cropit('zoom');
+          this.field.croppedImage = this.$editor.cropit('export');
+        },
+        onOffsetChange: function() {
+          if(!this.isCropperInitialized) return;
+          this.shouldSave = true;
+          let o = this.$editor.cropit('offset');
+          this.field.offset = {x: Math.floor(o.x), y: Math.floor(o.y)};
+          this.field.croppedImage = this.$editor.cropit('export');
+        },        
+      },
+      mounted: function() {
+        this.$root = $(this.$el);
+        this.$modal = this.$root.closest('.modal');
+        this.$editor = this.$root.find('.image-editor');
+        this.$referenceImage = this.$editor.find('.reference');
+        this.$fileInput = this.$editor.find('[type=file]');
+        this.$modal.on('show.bs.modal', this.showBsModal);
+        this.$modal.on('shown.bs.modal', this.shownBsModal);
+        this.$modal.on('hide.bs.modal', this.hideBsModal);
+      },
+      
+      beforeDestroy: function() {
+        this.$modal.off('show.bs.modal', this.showBsModal);
+        this.$modal.off('shown.bs.modal', this.shownBsModal);
+        this.$modal.off('hide.bs.modal', this.hideBsModal);
+      },
+      
     };
   }
 }
